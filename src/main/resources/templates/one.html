@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<title>Spring Boot + JPA + Datatables</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script src="/js/datatable.js"></script>
+	<script src="/js/createVLDatatable.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("#selectall").click(function () {
+			    if (this.checked) {
+			        $('.batteries').each(function () {
+			            this.checked = true;
+			        })
+			    }
+			    else {
+			        $('.batteries').each(function () {
+			            this.checked = false;
+			        })
+			    }
+			})
+			
+			$('#submit').click(function() {
+                var customBatteryList = [];
+                $("#createVLTable input[name=batteries]:checked").each(function () {
+	                var row = $(this).closest("tr")[0];
+	                var msg="";
+	                msg+=row.cells[1].innerHTML;
+	                var msg1="";
+	                msg1+=row.cells[2].innerHTML;
+	                var customBattery={ 
+	                			batteryId:msg,
+	                		    manufacturer:msg1
+	                		};
+	          /*       alert(JSON.stringify(customBattery)); */
+	                customBatteryList.push(customBattery);
+	               
+	            });
+               /*  alert(JSON.stringify(customBatteryList)); */
+              /*   customBatteryList = JSON.stringify({
+
+                    'customBatteryList' : customBatteryList 
+
+                }); */    
+                $.ajax({
+                	url:"/saveItems",
+
+                    type: 'POST',
+
+                    data:  JSON.stringify(customBatteryList),             
+
+                    dataType: "json",          
+
+                    contentType: 'application/json',
+
+                    mimeType: 'application/json',
+
+                    success: function(data){ 
+
+                        console.log(data);              
+
+                        return false;      
+
+                    } 
+                });
+            });
+			
+		});
+	
+    </script>
+</head>
+
+<body>
+	<h1>Create Vendor List</h1>
+		<table id="createVLTable" class="display" cellspacing="0" width="100%">
+	      
+	       <!-- Header Table -->
+	       <thead>
+	            <tr>
+	            	<th><input id="selectall" type="checkbox"></th>
+	                <th>BatteryId</th>
+					<th>Manufacturer</th>
+	                <th>Make</th>
+	                <th>Model</th>
+	                <th>Battery Capacity</th>
+	                <th>Range in KM</th>
+	                <th>Range in Miles</th>
+					<th>Watt Hours/KM</th>
+	                <th>Watt Hours/Miles</th>
+	                <th>Energy Cost/KM</th>
+	                <th>Energy Cost/Miles</th>
+	                <th>Charging times</th>
+	            </tr>
+	        </thead>
+	        <!-- Footer Table -->
+	        <tfoot>
+	            <tr>
+	            	<th></th>
+	                <th>BatteryId</th>
+					<th>Manufacturer</th>
+	                <th>Make</th>
+	                <th>Model</th>
+	                <th>Battery Capacity</th>
+	                <th>Range in KM</th>
+	                <th>Range in Miles</th>
+					<th>Watt Hours/KM</th>
+	                <th>Watt Hours/Miles</th>
+	                <th>Energy Cost/KM</th>
+	                <th>Energy Cost/Miles</th>
+	                <th>Charging times</th>
+	            </tr>
+	        </tfoot>
+	    </table>
+    	<p>
+		<input type="button" id="submit" value="Save"/>
+		</p>
+</body>
+</html>
